@@ -1,0 +1,26 @@
+# Custom error handling for 404 errors
+ErrorDocument 404 /custom_404.php
+
+# Enable rewriting
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Base directory
+    RewriteBase /
+    
+    # Handle Google Auth callbacks - multiple possible patterns
+    RewriteRule ^User/google-callback$ /User/google.Auth/google-callback.php [L]
+    RewriteRule ^User/google.Auth/google-callback$ /User/google.Auth/google-callback.php [L]
+    RewriteRule ^User/google_callback$ /User/google_callback.php [L]
+    
+    # Log attempted access to non-existent files (helps with debugging)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ /log_404.php?url=$1 [L]
+</IfModule>
+
+# Set proper PHP settings
+<IfModule mod_php8.c>
+    php_flag display_errors on
+    php_value error_reporting E_ALL
+</IfModule> 
